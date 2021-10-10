@@ -1,0 +1,42 @@
+﻿<Window x:Class="ComputerGraphicStudies.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ComputerGraphicStudies"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        MouseMove="CanvasMouseMove"
+        MouseLeftButtonDown="CanvasMouseLeftButtonDown"
+        MouseLeftButtonUp="CanvasMouseLeftButtonUp">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Zadanie 1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel HorizontalAlignment="Stretch" Margin="5px">
+                        <Label FontWeight="Bold">Figury:</Label>
+                        <ComboBox Name="shapeType" SelectedValuePath="Content">
+                            <ComboBoxItem IsSelected="True">Odcinek</ComboBoxItem>
+                            <ComboBoxItem>Prostokąt</ComboBoxItem>
+                            <ComboBoxItem>Elipsa</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                    <Label Name="mousePosition" VerticalAlignment="Bottom">(0, 0)</Label>
+                    <Canvas Name="canvas" Height="500" Width="500" Grid.Column="1" Background="LightGray" ClipToBounds="True">
+                        
+                    </Canvas>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Zadanie 2">
+                Content
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
