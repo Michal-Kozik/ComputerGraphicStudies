@@ -6,9 +6,7 @@
         xmlns:local="clr-namespace:ComputerGraphicStudies"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        MouseMove="CanvasMouseMove"
-        MouseLeftButtonDown="CanvasMouseLeftButtonDown"
-        MouseLeftButtonUp="CanvasMouseLeftButtonUp">
+        >
     <Grid>
         <TabControl>
             <TabItem Header="Zadanie 1">
@@ -22,15 +20,45 @@
                     </Grid.RowDefinitions>
                     <StackPanel HorizontalAlignment="Stretch" Margin="5px">
                         <Label FontWeight="Bold">Figury:</Label>
-                        <ComboBox Name="shapeType" SelectedValuePath="Content">
+                        <ComboBox Name="shapeType" SelectedValuePath="Content" Margin="0, 5">
                             <ComboBoxItem IsSelected="True">Odcinek</ComboBoxItem>
                             <ComboBoxItem>Prostokąt</ComboBoxItem>
                             <ComboBoxItem>Elipsa</ComboBoxItem>
                         </ComboBox>
+                        <Grid Margin="0, 5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.ColumnSpan="4">Współrzędna nr 1:</Label>
+                            <TextBox Name="x1Input" Grid.Row="1" VerticalContentAlignment="Center"></TextBox>
+                            <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">px</Label>
+                            <TextBox Name="y1Input" Grid.Row="1" Grid.Column="2" VerticalContentAlignment="Center"></TextBox>
+                            <Label Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center">px</Label>
+                            <Label Grid.Row="2" Grid.ColumnSpan="4">Współrzędna nr 2:</Label>
+                            <TextBox Name="x2Input" Grid.Row="3" VerticalContentAlignment="Center"></TextBox>
+                            <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center">px</Label>
+                            <TextBox Name="y2Input" Grid.Row="3" Grid.Column="2" VerticalContentAlignment="Center"></TextBox>
+                            <Label Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center">px</Label>
+                        </Grid>
+                        <Button Click="CreateShape">Stwórz</Button>
+                        <CheckBox Margin="0, 10" Name="isMovingEnable" Checked="EnableMoving" Unchecked="DisableMoving">Przeciąganie</CheckBox>
                     </StackPanel>
                     <Label Name="mousePosition" VerticalAlignment="Bottom">(0, 0)</Label>
-                    <Canvas Name="canvas" Height="500" Width="500" Grid.Column="1" Background="LightGray" ClipToBounds="True">
-                        
+                    <Canvas Name="canvas" Grid.Column="1" Background="LightGray" ClipToBounds="True" AllowDrop="True" 
+                            MouseMove="Canvas_MouseMove"
+                            MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+                            MouseLeftButtonUp="Canvas_MouseLeftButtonUp"
+                            DragOver="Canvas_DragOver">
                     </Canvas>
                 </Grid>
             </TabItem>
