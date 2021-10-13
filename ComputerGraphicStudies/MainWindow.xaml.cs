@@ -136,6 +136,7 @@ namespace ComputerGraphicStudies
         {
             canvas.MouseLeftButtonDown += Canvas_MouseLeftButtonDown;
             canvas.MouseLeftButtonUp += Canvas_MouseLeftButtonUp;
+            canvas.MouseMove -= Shape_MouseMove;
         }
 
         private void CreateShape(object sender, RoutedEventArgs e)
@@ -179,20 +180,20 @@ namespace ComputerGraphicStudies
             shape.Fill = new SolidColorBrush(Colors.Pink);
             shape.Stroke = new SolidColorBrush(Colors.Red);
             shape.StrokeThickness = 1;
-            if (!(shape is Line))
-            {
-                shape.SetValue(Canvas.LeftProperty, Double.Parse(x1Input.Text));
-                shape.SetValue(Canvas.TopProperty, Double.Parse(y1Input.Text));
-                shape.Width = x2 - x1;
-                shape.Height = y2 - y1;
-            }
-            else
+            if (shape is Line)
             {
                 Line line = shape as Line;
                 line.X1 = x1;
                 line.Y1 = y1;
                 line.X2 = x2;
                 line.Y2 = y2;
+            }
+            else
+            {
+                shape.SetValue(Canvas.LeftProperty, Double.Parse(x1Input.Text));
+                shape.SetValue(Canvas.TopProperty, Double.Parse(y1Input.Text));
+                shape.Width = x2 - x1;
+                shape.Height = y2 - y1;
             }
 
             //newestShape = shape;
