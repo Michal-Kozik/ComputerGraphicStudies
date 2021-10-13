@@ -12,14 +12,14 @@
             <TabItem Header="Zadanie 1">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
                     <StackPanel HorizontalAlignment="Stretch" Margin="5px">
-                        <Label FontWeight="Bold">Figury:</Label>
+                        <Label FontWeight="Bold">Rysowanie:</Label>
                         <ComboBox Name="shapeType" SelectedValuePath="Content" Margin="0, 5">
                             <ComboBoxItem IsSelected="True">Odcinek</ComboBoxItem>
                             <ComboBoxItem>Prostokąt</ComboBoxItem>
@@ -50,8 +50,17 @@
                             <TextBox Name="y2Input" Grid.Row="3" Grid.Column="2" VerticalContentAlignment="Center"></TextBox>
                             <Label Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center">px</Label>
                         </Grid>
-                        <Button Click="CreateShape">Stwórz</Button>
-                        <CheckBox Margin="0, 10" Name="isMovingEnable" Checked="EnableMoving" Unchecked="DisableMoving">Przeciąganie</CheckBox>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Left" Width="80" Click="CreateShape">Stwórz</Button>
+                            <Button Name="editButton" HorizontalAlignment="Right" Width="80" IsEnabled="False" Click="EditShape">Edytuj</Button>
+                        </DockPanel>
+                        
+                        <Border BorderThickness="0, 0, 0, 1" BorderBrush="Gray" Margin="0, 10"></Border>
+                        <Label FontWeight="Bold">Modyfikatory:</Label>
+                        <RadioButton GroupName="options" Name="noneOption" IsChecked="True">Nic</RadioButton>
+                        <RadioButton GroupName="options" Name="isTickingEnable" Checked="EnableMoving" Unchecked="DisableMoving">Zaznaczanie</RadioButton>
+                        <RadioButton GroupName="options" Name="isMovingEnable" Checked="EnableMoving" Unchecked="DisableMoving">Przesuwanie</RadioButton>
+                        <RadioButton GroupName="options" Name="isResizingEnable" Checked="EnableMoving" Unchecked="DisableMoving">Rozciąganie</RadioButton>
                     </StackPanel>
                     <Label Name="mousePosition" VerticalAlignment="Bottom">(0, 0)</Label>
                     <Canvas Name="canvas" Grid.Column="1" Background="LightGray" ClipToBounds="True" AllowDrop="True" 

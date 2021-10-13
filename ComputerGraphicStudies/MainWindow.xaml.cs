@@ -91,7 +91,7 @@ namespace ComputerGraphicStudies
             newestShape = shape;
             start = e.GetPosition(canvas);
             shape.MouseLeftButtonDown += Shape_MouseLeftButtonDown;
-            shape.MouseMove += Shape_MouseMove;
+            //shape.MouseMove += Shape_MouseMove;
             canvas.Children.Add(shape);
             mouseLeftButtonClicked = true;
         }
@@ -105,27 +105,31 @@ namespace ComputerGraphicStudies
         private void Canvas_DragOver(object sender, DragEventArgs e)
         {
             Point dropPosition = e.GetPosition(canvas);
-            if (newestShape is Line)
+            if (isMovingEnable.IsChecked == true)
             {
-                Line line = newestShape as Line;
-                double x2 = dropPosition.X - line.X1;
-                double y2 = dropPosition.Y - line.Y1;
-                line.X1 = dropPosition.X;
-                line.Y1 = dropPosition.Y;
-                line.X2 += x2;
-                line.Y2 += y2;
-            }
-            else
-            {
-                Canvas.SetLeft(newestShape, dropPosition.X);
-                Canvas.SetTop(newestShape, dropPosition.Y);
-            }
+                if (newestShape is Line)
+                {
+                    Line line = newestShape as Line;
+                    double x2 = dropPosition.X - line.X1;
+                    double y2 = dropPosition.Y - line.Y1;
+                    line.X1 = dropPosition.X;
+                    line.Y1 = dropPosition.Y;
+                    line.X2 += x2;
+                    line.Y2 += y2;
+                }
+                else
+                {
+                    Canvas.SetLeft(newestShape, dropPosition.X);
+                    Canvas.SetTop(newestShape, dropPosition.Y);
+                }
+            }  
         }
 
         private void EnableMoving(object sender, RoutedEventArgs e)
         {
             canvas.MouseLeftButtonDown -= Canvas_MouseLeftButtonDown;
             canvas.MouseLeftButtonUp -= Canvas_MouseLeftButtonUp;
+            canvas.MouseMove += Shape_MouseMove;
         }
 
         private void DisableMoving(object sender, RoutedEventArgs e)
@@ -136,13 +140,25 @@ namespace ComputerGraphicStudies
 
         private void CreateShape(object sender, RoutedEventArgs e)
         {
-            //dodac warunek czy inputy sa puste.
-            // Linia nie jest rysowana.
             Shape shape;
-            double x1 = Double.Parse(x1Input.Text);
-            double y1 = Double.Parse(y1Input.Text);
-            double x2 = Double.Parse(x2Input.Text);
-            double y2 = Double.Parse(y2Input.Text);
+            bool x1ParsingResult, y1ParsingResult, x2ParsingResult, y2ParsingResult;
+            double x1, y1, x2, y2;
+            x1ParsingResult = Double.TryParse(x1Input.Text, out x1);
+            y1ParsingResult = Double.TryParse(y1Input.Text, out y1);
+            x2ParsingResult = Double.TryParse(x2Input.Text, out x2);
+            y2ParsingResult = Double.TryParse(y2Input.Text, out y2);
+
+            // Walidacja inputow.
+            if (!x1ParsingResult || !y1ParsingResult || !x2ParsingResult || !y2ParsingResult)
+            {
+                MessageBox.Show("Dane są niepoprawne, upewnij się, że podałeś liczby, a jako separatora użyłeś przecinka.", "Niepoprawne dane", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (x1 >= x2 || y1 >= y2)
+            {
+                MessageBox.Show("x1 i y1 nie mogą być mniejsze niż x2 i y2", "Niepoprawne dane", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             switch (shapeType.SelectedValue)
             {
@@ -162,7 +178,7 @@ namespace ComputerGraphicStudies
 
             shape.Fill = new SolidColorBrush(Colors.Pink);
             shape.Stroke = new SolidColorBrush(Colors.Red);
-            shape.StrokeThickness = 3;
+            shape.StrokeThickness = 1;
             if (!(shape is Line))
             {
                 shape.SetValue(Canvas.LeftProperty, Double.Parse(x1Input.Text));
@@ -179,8 +195,33 @@ namespace ComputerGraphicStudies
                 line.Y2 = y2;
             }
 
-            newestShape = shape;
+            //newestShape = shape;
+            shape.MouseLeftButtonDown += Shape_MouseLeftButtonDown;
             canvas.Children.Add(shape);
+        }
+
+        private void EditShape(object sender, RoutedEventArgs e)
+        {
+            double x1 = Double.Parse(x1Input.Text);
+            double y1 = Double.Parse(y1Input.Text);
+            double x2 = Double.Parse(x2Input.Text);
+            double y2 = Double.Parse(y2Input.Text);
+
+            if (newestShape is Line)
+            {
+                Line line = newestShape as Line;
+                line.X1 = x1;
+                line.Y1 = y1;
+                line.X2 = x2;
+                line.Y2 = y2;
+            }
+            else
+            {
+                newestShape.SetValue(Canvas.LeftProperty, Double.Parse(x1Input.Text));
+                newestShape.SetValue(Canvas.TopProperty, Double.Parse(y1Input.Text));
+                newestShape.Width = x2 - x1;
+                newestShape.Height = y2 - y1;
+            }
         }
 
         private void Shape_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -191,13 +232,53 @@ namespace ComputerGraphicStudies
             }
             newestShape = sender as Shape;
             newestShape.StrokeThickness = 3;
+
+            if (newestShape is Line)
+            {
+                Line line = newestShape as Line;
+                x1Input.Text = line.X1.ToString("N0");
+                y1Input.Text = line.Y1.ToString("N0");
+                x2Input.Text = line.X2.ToString("N0");
+                y2Input.Text = line.Y2.ToString("N0");
+            }
+            else
+            {
+                double x1 = Canvas.GetLeft(newestShape);
+                double y1 = Canvas.GetTop(newestShape);
+                x1Input.Text = x1.ToString();
+                y1Input.Text = y1.ToString();
+                x2Input.Text = (x1 + newestShape.Width).ToString("N0");
+                y2Input.Text = (y1 + newestShape.Height).ToString("N0");
+            }
+            editButton.IsEnabled = true;
         }
 
         private void Shape_MouseMove(object sender, MouseEventArgs e)
         {
+            Point currentPoint = e.GetPosition(canvas);
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                DragDrop.DoDragDrop(newestShape, newestShape, DragDropEffects.Move);
+                // Poruszanie.
+                if (isMovingEnable.IsChecked == true)
+                {
+                    DragDrop.DoDragDrop(newestShape, newestShape, DragDropEffects.Move);
+                }
+                // Skalowanie.
+                if (isResizingEnable.IsChecked == true)
+                {
+                    if (newestShape is Line)
+                    {
+                        var line = newestShape as Line;
+                        line.X2 = currentPoint.X;
+                        line.Y2 = currentPoint.Y;
+                    }
+                    else
+                    {
+                        newestShape.Height = Math.Abs(currentPoint.Y - Canvas.GetTop(newestShape));
+                        newestShape.Width = Math.Abs(currentPoint.X - Canvas.GetLeft(newestShape));
+                    }
+                }
             }
         }
     }
